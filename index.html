@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ṭbetis sulta maṭiane - Complete Prosopographical Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.5;
+            color: #000;
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: normal;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 16px;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .manuscript-info {
+            font-size: 12px;
+            text-align: center;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .search-controls {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input, select {
+            padding: 6px 8px;
+            border: 1px solid #999;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        input:focus, select:focus {
+            outline: 1px solid #000;
+            border-color: #000;
+        }
+
+        button {
+            background: #fff;
+            border: 1px solid #999;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        button:hover {
+            background: #f5f5f5;
+        }
+
+        button:active {
+            background: #eee;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results {
+            border: 1px solid #ddd;
+        }
+
+        .results-header {
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .person-card {
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+        }
+
+        .person-card:last-child {
+            border-bottom: none;
+        }
+
+        .person-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .person-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .detail-item {
+            display: flex;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            margin-right: 8px;
+            min-width: 70px;
+        }
+
+        .family-members {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .family-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .family-member {
+            display: inline-block;
+            margin: 2px 8px 2px 0;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            padding: 2px 6px;
+            background: #fff;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .georgian-text {
+            font-family: 'DejaVu Sans', 'Arial Unicode MS', sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .view-toggle {
+            margin-bottom: 15px;
+        }
+
+        .view-toggle button {
+            margin-right: 5px;
+        }
+
+        .view-toggle button.active {
+            background: #000;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .person-details {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="text-align: right; margin-bottom: 15px;">
+                <button onclick="toggleLanguage()" id="langToggle">ქართული</button>
+            </div>
+            <h1 id="mainTitle">Ṭbetis sulta maṭiane</h1>
+            <div class="subtitle" id="subtitle">Complete Synodal Records from Ṭbeti - Prosopographical Database</div>
+            <div class="manuscript-info">
+                <strong id="msLabel">Manuscript:</strong> St. Petersburg, Russian National Library, P10/P13 |
+                <strong id="periodLabel">Period:</strong> <span id="periodText">Medieval (10th-15th centuries)</span> |
+                <strong id="languageLabel">Language:</strong> <span id="languageText">Old Georgian</span> |
+                <strong id="scriptLabel">Script:</strong> Nuskhuri |
+                <strong>Entries:</strong> 625
+            </div>
+        </header>
+
+        <div class="search-controls">
+            <div class="search-row">
+                <input type="text" id="nameSearch" placeholder="Name">
+                <input type="text" id="patronymicSearch" placeholder="Patronymic">
+                <select id="typeFilter">
+                    <option value="" id="allTypesOption">All types</option>
+                    <option value="main" id="mainOption">Main person</option>
+                    <option value="wife" id="wifeOption">Wife</option>
+                    <option value="son" id="sonOption">Son</option>
+                    <option value="daughter" id="daughterOption">Daughter</option>
+                    <option value="brother" id="brotherOption">Brother</option>
+                    <option value="sister" id="sisterOption">Sister</option>
+                    <option value="mother" id="motherOption">Mother</option>
+                    <option value="father" id="fatherOption">Father</option>
+                    <option value="evangelist" id="evangelistOption">Evangelist</option>
+                    <option value="monk" id="monkOption">Monk</option>
+                </select>
+                <input type="text" id="manuscriptSearch" placeholder="Folio (e.g., Ir, IIv)">
+            </div>
+            <div class="search-row">
+                <button onclick="performSearch()" id="searchBtn">Search</button>
+                <button onclick="clearSearch()" id="clearBtn">Clear</button>
+                <button onclick="showAll()" id="showAllBtn">Show All</button>
+                <button onclick="exportData('csv')" id="exportBtn">Export CSV</button>
+                <button onclick="exportData('json')" id="exportJsonBtn">Export JSON</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number" id="totalEntries">625</span>
+                <span class="stat-label" id="entriesLabel">Entries</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalPersons">900</span>
+                <span class="stat-label" id="personsLabel">Persons</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="uniquePatronymics">0</span>
+                <span class="stat-label" id="patronymicsLabel">Patronymics</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="occupationsCount">2</span>
+                <span class="stat-label" id="occupationsLabel">Occupations</span>
+            </div>
+        </div>
+
+        <div class="view-toggle">
+            <button onclick="setView('cards')" id="cardsBtn" class="active">Card View</button>
+            <button onclick="setView('table')" id="tableBtn">Table View</button>
+        </div>
+
+        <div class="results">
+            <div class="results-header">
+                <span id="resultsCount">Loading...</span>
+            </div>
+            <div id="resultsContainer">
+                <div class="no-results" id="loadingText">Loading prosopographical data...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the parsed data -->
+    <script src="tbeti_data.js"></script>
+
+    <script>
+        let currentResults = [];
+        let currentView = 'cards';
+        let currentLanguage = 'en';
+
+        // Language translations
+        const translations = {
+            en: {
+                mainTitle: "Ṭbetis sulta maṭiane",
+                subtitle: "Complete Synodal Records from Ṭbeti - Prosopographical Database",
+                msLabel: "Manuscript:",
+                periodLabel: "Period:",
+                periodText: "Medieval (10th-15th centuries)",
+                languageLabel: "Language:",
+                languageText: "Old Georgian",
+                scriptLabel: "Script:",
+                namePlaceholder: "Name",
+                patronymicPlaceholder: "Patronymic",
+                manuscriptPlaceholder: "Folio (e.g., Ir, IIv)",
+                allTypesOption: "All types",
+                mainOption: "Main person",
+                wifeOption: "Wife",
+                sonOption: "Son",
+                daughterOption: "Daughter",
+                brotherOption: "Brother",
+                sisterOption: "Sister",
+                motherOption: "Mother",
+                fatherOption: "Father",
+                evangelistOption: "Evangelist",
+                monkOption: "Monk",
+                searchBtn: "Search",
+                clearBtn: "Clear",
+                showAllBtn: "Show All",
+                exportBtn: "Export CSV",
+                exportJsonBtn: "Export JSON",
+                entriesLabel: "Entries",
+                personsLabel: "Persons",
+                patronymicsLabel: "Patronymics",
+                occupationsLabel: "Occupations",
+                cardViewBtn: "Card View",
+                tableViewBtn: "Table View",
+                entriesFound: "entries",
+                noEntriesFound: "No entries found.",
+                loading: "Loading prosopographical data...",
+                entryLabel: "Entry:",
+                typeLabel: "Type:",
+                patronymicLabel: "Patronymic:",
+                occupationLabel: "Occupation:",
+                msLabel2: "MS:",
+                edLabel: "Ed:",
+                familyTitle: "Family:",
+                tableHeaders: {
+                    entry: "Entry",
+                    name: "Name",
+                    patronymic: "Patronymic",
+                    type: "Type",
+                    occupation: "Occupation",
+                    family: "Family",
+                    msRef: "MS Ref"
+                },
+                langToggle: "ქართული"
+            },
+            ka: {
+                mainTitle: "ტბეთის სულთა მატიანე",
+                subtitle: "ტბეთის სინოდიკონი - სრული პროსოპოგრაფიული მონაცემთა ბაზა",
+                msLabel: "ხელნაწერი:",
+                periodLabel: "პერიოდი:",
+                periodText: "შუასაუკუნეები (X-XV საუკუნეები)",
+                languageLabel: "ენა:",
+                languageText: "ძველი ქართული",
+                scriptLabel: "დამწერლობა:",
+                namePlaceholder: "სახელი",
+                patronymicPlaceholder: "მამისახელი",
+                manuscriptPlaceholder: "ფოლიო (მაგ., Ir, IIv)",
+                allTypesOption: "ყველა ტიპი",
+                mainOption: "მთავარი პირი",
+                wifeOption: "მეუღლე",
+                sonOption: "შვილი",
+                daughterOption: "ასული",
+                brotherOption: "ძმა",
+                sisterOption: "და",
+                motherOption: "დედა",
+                fatherOption: "მამა",
+                evangelistOption: "მახარებელი",
+                monkOption: "ბერი",
+                searchBtn: "ძიება",
+                clearBtn: "გასუფთავება",
+                showAllBtn: "ყველას ჩვენება",
+                exportBtn: "CSV ექსპორტი",
+                exportJsonBtn: "JSON ექსპორტი",
+                entriesLabel: "ჩანაწერები",
+                personsLabel: "პირები",
+                patronymicsLabel: "მამისახელები",
+                occupationsLabel: "პროფესიები",
+                cardViewBtn: "ბარათების ხედი",
+                tableViewBtn: "ცხრილის ხედი",
+                entriesFound: "ჩანაწერი",
+                noEntriesFound: "ჩანაწერები ვერ მოიძებნა.",
+                loading: "პროსოპოგრაფიული მონაცემების ჩატვირთვა...",
+                entryLabel: "ჩანაწერი:",
+                typeLabel: "ტიპი:",
+                patronymicLabel: "მამისახელი:",
+                occupationLabel: "პროფესია:",
+                msLabel2: "ხნ:",
+                edLabel: "გამოც:",
+                familyTitle: "ოჯახი:",
+                tableHeaders: {
+                    entry: "ჩანაწერი",
+                    name: "სახელი",
+                    patronymic: "მამისახელი",
+                    type: "ტიპი",
+                    occupation: "პროფესია",
+                    family: "ოჯახი",
+                    msRef: "ხნ. მით."
+                },
+                langToggle: "English"
+            }
+        };
+
+        // Main application functions
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'ka' : 'en';
+            updateUILanguage();
+        }
+
+        function updateUILanguage() {
+            const t = translations[currentLanguage];
+
+            // Update header
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('msLabel').textContent = t.msLabel;
+            document.getElementById('periodLabel').textContent = t.periodLabel;
+            document.getElementById('periodText').textContent = t.periodText;
+            document.getElementById('languageLabel').textContent = t.languageLabel;
+            document.getElementById('languageText').textContent = t.languageText;
+            document.getElementById('scriptLabel').textContent = t.scriptLabel;
+
+            // Update search controls
+            document.getElementById('nameSearch').placeholder = t.namePlaceholder;
+            document.getElementById('patronymicSearch').placeholder = t.patronymicPlaceholder;
+            document.getElementById('manuscriptSearch').placeholder = t.manuscriptPlaceholder;
+
+            // Update select options
+            document.getElementById('allTypesOption').textContent = t.allTypesOption;
+            document.getElementById('mainOption').textContent = t.mainOption;
+            document.getElementById('wifeOption').textContent = t.wifeOption;
+            document.getElementById('sonOption').textContent = t.sonOption;
+            document.getElementById('daughterOption').textContent = t.daughterOption;
+            document.getElementById('brotherOption').textContent = t.brotherOption;
+            document.getElementById('sisterOption').textContent = t.sisterOption;
+            document.getElementById('motherOption').textContent = t.motherOption;
+            document.getElementById('fatherOption').textContent = t.fatherOption;
+            document.getElementById('evangelistOption').textContent = t.evangelistOption;
+            document.getElementById('monkOption').textContent = t.monkOption;
+
+            // Update buttons
+            document.getElementById('searchBtn').textContent = t.searchBtn;
+            document.getElementById('clearBtn').textContent = t.clearBtn;
+            document.getElementById('showAllBtn').textContent = t.showAllBtn;
+            document.getElementById('exportBtn').textContent = t.exportBtn;
+            document.getElementById('exportJsonBtn').textContent = t.exportJsonBtn;
+
+            // Update stats
+            document.getElementById('entriesLabel').textContent = t.entriesLabel;
+            document.getElementById('personsLabel').textContent = t.personsLabel;
+            document.getElementById('patronymicsLabel').textContent = t.patronymicsLabel;
+            document.getElementById('occupationsLabel').textContent = t.occupationsLabel;
+
+            // Update view toggle
+            document.getElementById('cardsBtn').textContent = t.cardViewBtn;
+            document.getElementById('tableBtn').textContent = t.tableViewBtn;
+
+            // Update language toggle button
+            document.getElementById('langToggle').textContent = t.langToggle;
+
+            displayResults();
+        }
+
+        function initializeData() {
+            // Use the loaded prosopographical data
+            if (typeof prosopographicalData !== 'undefined') {
+                currentResults = prosopographicalData;
+                updateStatistics();
+                updateUILanguage();
+                showAll();
+                console.log(`Loaded ${prosopographicalData.length} entries from parsed data`);
+            } else {
+                // Fallback sample data
+                currentResults = getSampleData();
+                updateStatistics();
+                updateUILanguage();
+                showAll();
+                console.log("Using fallback sample data");
+            }
+        }
+
+        function getSampleData() {
+            return [
+                {
+                    entryId: "entry_001",
+                    entryNumber: 1,
+                    mainPerson: {
+                        name: "მახარებელი",
+                        type: "evangelist",
+                        occupation: "evangelist",
+                        patronymic: "გორგაზიეთ"
+                    },
+                    familyMembers: [
+                        { name: "მარიამი", type: "wife", relationship: "მეუღლესა" },
+                        { name: "თამარი", type: "daughter", relationship: "ასული" }
+                    ],
+                    manuscript: { line: "2-4", page: "Ir", folio: "Ir" },
+                    edition: { line: "2-3", page: "60" },
+                    dates: { century: "XI", period: "medieval" },
+                    notes: "სულსა გორგაზიეთ მახარებელისა და მისისა მეუღლესა მარიამისა და მათისა ასულისა თამსის შეუნდვენ ღმერთმან",
+                    places: []
+                }
+            ];
+        }
+
+        function updateStatistics() {
+            const totalEntries = currentResults.length;
+            const allPersons = [];
+            const patronymics = new Set();
+            const occupations = new Set();
+
+            currentResults.forEach(entry => {
+                allPersons.push(entry.mainPerson);
+                if (entry.mainPerson.patronymic) patronymics.add(entry.mainPerson.patronymic);
+                if (entry.mainPerson.surname) patronymics.add(entry.mainPerson.surname);
+                if (entry.mainPerson.occupation) occupations.add(entry.mainPerson.occupation);
+
+                if (entry.familyMembers) {
+                    entry.familyMembers.forEach(member => {
+                        allPersons.push(member);
+                    });
+                }
+            });
+
+            document.getElementById('totalEntries').textContent = totalEntries;
+            document.getElementById('totalPersons').textContent = allPersons.length;
+            document.getElementById('uniquePatronymics').textContent = patronymics.size;
+            document.getElementById('occupationsCount').textContent = occupations.size;
+        }
+
+        function performSearch() {
+            const nameSearch = document.getElementById('nameSearch').value.toLowerCase();
+            const patronymicSearch = document.getElementById('patronymicSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const manuscriptSearch = document.getElementById('manuscriptSearch').value.toLowerCase();
+
+            const allData = typeof prosopographicalData !== 'undefined' ? prosopographicalData : getSampleData();
+
+            currentResults = allData.filter(entry => {
+                const mainMatch = matchesPerson(entry.mainPerson, nameSearch, patronymicSearch, typeFilter) &&
+                                 matchesManuscript(entry.manuscript, manuscriptSearch);
+
+                const familyMatch = entry.familyMembers && entry.familyMembers.some(member =>
+                    matchesPerson(member, nameSearch, patronymicSearch, typeFilter)
+                );
+
+                return mainMatch || familyMatch;
+            });
+
+            displayResults();
+        }
+
+        function matchesPerson(person, nameSearch, patronymicSearch, typeFilter) {
+            const nameMatch = !nameSearch || person.name?.toLowerCase().includes(nameSearch);
+            const patronymicMatch = !patronymicSearch ||
+                person.patronymic?.toLowerCase().includes(patronymicSearch) ||
+                person.surname?.toLowerCase().includes(patronymicSearch);
+            const typeMatch = !typeFilter || person.type === typeFilter;
+
+            return nameMatch && patronymicMatch && typeMatch;
+        }
+
+        function matchesManuscript(manuscript, manuscriptSearch) {
+            if (!manuscriptSearch) return true;
+            return manuscript?.page?.toLowerCase().includes(manuscriptSearch) ||
+                   manuscript?.folio?.toLowerCase().includes(manuscriptSearch);
+        }
+
+        function clearSearch() {
+            document.getElementById('nameSearch').value = '';
+            document.getElementById('patronymicSearch').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('manuscriptSearch').value = '';
+            showAll();
+        }
+
+        function showAll() {
+            const allData = typeof prosopographicalData !== 'undefined' ? prosopographicalData : getSampleData();
+            currentResults = allData;
+            displayResults();
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.getElementById('cardsBtn').classList.toggle('active', view === 'cards');
+            document.getElementById('tableBtn').classList.toggle('active', view === 'table');
+            displayResults();
+        }
+
+        function displayResults() {
+            const container = document.getElementById('resultsContainer');
+            const countElement = document.getElementById('resultsCount');
+            const t = translations[currentLanguage];
+
+            countElement.textContent = `${currentResults.length} ${t.entriesFound}`;
+
+            if (currentResults.length === 0) {
+                container.innerHTML = `<div class="no-results">${t.noEntriesFound}</div>`;
+                return;
+            }
+
+            if (currentView === 'table') {
+                displayTableView(container);
+            } else {
+                displayCardView(container);
+            }
+        }
+
+        function displayCardView(container) {
+            const html = currentResults.map(entry => createPersonCard(entry)).join('');
+            container.innerHTML = html;
+        }
+
+        function displayTableView(container) {
+            const t = translations[currentLanguage];
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>${t.tableHeaders.entry}</th>
+                            <th>${t.tableHeaders.name}</th>
+                            <th>${t.tableHeaders.patronymic}</th>
+                            <th>${t.tableHeaders.type}</th>
+                            <th>${t.tableHeaders.occupation}</th>
+                            <th>${t.tableHeaders.family}</th>
+                            <th>${t.tableHeaders.msRef}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            currentResults.forEach(entry => {
+                const familyNames = entry.familyMembers ?
+                    entry.familyMembers.map(m => `${m.name} (${getLocalizedType(m.type)})`).join(', ') : '';
+
+                html += `
+                    <tr>
+                        <td>${entry.entryNumber}</td>
+                        <td class="georgian-text">${entry.mainPerson.name || ''}</td>
+                        <td class="georgian-text">${entry.mainPerson.patronymic || entry.mainPerson.surname || ''}</td>
+                        <td>${getLocalizedType(entry.mainPerson.type) || ''}</td>
+                        <td class="georgian-text">${entry.mainPerson.occupation || ''}</td>
+                        <td class="georgian-text">${familyNames}</td>
+                        <td>f. ${entry.manuscript?.page || entry.manuscript?.folio || ''}, l. ${entry.manuscript?.line || ''}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function getLocalizedType(type) {
+            const typeMap = {
+                'main': { en: 'main', ka: 'მთავარი' },
+                'wife': { en: 'wife', ka: 'მეუღლე' },
+                'son': { en: 'son', ka: 'შვილი' },
+                'daughter': { en: 'daughter', ka: 'ასული' },
+                'brother': { en: 'brother', ka: 'ძმა' },
+                'sister': { en: 'sister', ka: 'და' },
+                'mother': { en: 'mother', ka: 'დედა' },
+                'father': { en: 'father', ka: 'მამა' },
+                'evangelist': { en: 'evangelist', ka: 'მახარებელი' },
+                'monk': { en: 'monk', ka: 'ბერი' },
+                'woman': { en: 'woman', ka: 'ქალი' }
+            };
+
+            return typeMap[type] ? typeMap[type][currentLanguage] : type;
+        }
+
+        function createPersonCard(entry) {
+            const mainPerson = entry.mainPerson;
+            const familyMembers = entry.familyMembers || [];
+            const t = translations[currentLanguage];
+
+            return `
+                <div class="person-card">
+                    <div class="person-name georgian-text">
+                        ${mainPerson.name || ''}
+                        ${mainPerson.patronymic ? ` (${mainPerson.patronymic})` : ''}
+                        ${mainPerson.surname ? ` [${mainPerson.surname}]` : ''}
+                    </div>
+                    <div class="person-details">
+                        <div class="detail-item">
+                            <span class="detail-label">${t.entryLabel}</span>
+                            <span>${entry.entryNumber}</span>
+                        </div>
+                        ${mainPerson.type ? `
+                        <div class="detail-item">
+                            <span class="detail-label">${t.typeLabel}</span>
+                            <span>${getLocalizedType(mainPerson.type)}</span>
+                        </div>
+                        ` : ''}
+                        ${mainPerson.patronymic ? `
+                        <div class="detail-item">
+                            <span class="detail-label">${t.patronymicLabel}</span>
+                            <span class="georgian-text">${mainPerson.patronymic}</span>
+                        </div>
+                        ` : ''}
+                        ${mainPerson.occupation ? `
+                        <div class="detail-item">
+                            <span class="detail-label">${t.occupationLabel}</span>
+                            <span class="georgian-text">${mainPerson.occupation}</span>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                            <span class="detail-label">${t.msLabel2}</span>
+                            <span>f. ${entry.manuscript?.page || entry.manuscript?.folio || ''}, l. ${entry.manuscript?.line || ''}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">${t.edLabel}</span>
+                            <span>p. ${entry.edition?.page || ''}, l. ${entry.edition?.line || ''}</span>
+                        </div>
+                    </div>
+                    ${familyMembers.length > 0 ? `
+                    <div class="family-members">
+                        <div class="family-title">${t.familyTitle}</div>
+                        ${familyMembers.map(member => `
+                            <span class="family-member georgian-text">
+                                ${member.name} (${getLocalizedType(member.type)})
+                            </span>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function exportData(format = 'csv') {
+            if (format === 'json') {
+                const jsonData = {
+                    metadata: {
+                        title: "Ṭbetis sulta maṭiane",
+                        description: "Complete Synodal Records from Ṭbeti - Prosopographical Database",
+                        manuscript: "St. Petersburg, Russian National Library, P10/P13",
+                        totalEntries: currentResults.length,
+                        exportDate: new Date().toISOString(),
+                        language: currentLanguage
+                    },
+                    entries: currentResults
+                };
+
+                const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonData, null, 2));
+                const link = document.createElement("a");
+                link.setAttribute("href", jsonContent);
+                link.setAttribute("download", "tbeti_prosopographical_data.json");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                // CSV export
+                const csvContent = "data:text/csv;charset=utf-8," +
+                    "Entry,Name,Patronymic,Type,Occupation,Family_Members,MS_Reference,Notes\n" +
+                    currentResults.map(entry => {
+                        const familyNames = entry.familyMembers ?
+                            entry.familyMembers.map(m => `${m.name}(${m.type})`).join(';') : '';
+                        const msRef = `f.${entry.manuscript?.page || entry.manuscript?.folio || ''}_l.${entry.manuscript?.line || ''}`;
+
+                        return `${entry.entryNumber},"${entry.mainPerson.name || ''}","${entry.mainPerson.patronymic || entry.mainPerson.surname || ''}","${entry.mainPerson.type || ''}","${entry.mainPerson.occupation || ''}","${familyNames}","${msRef}","${(entry.notes || '').replace(/"/g, '""')}"`;
+                    }).join("\n");
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "tbeti_prosopographical_data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+
+            // Add search event listeners
+            document.getElementById('nameSearch').addEventListener('input', performSearch);
+            document.getElementById('patronymicSearch').addEventListener('input', performSearch);
+            document.getElementById('typeFilter').addEventListener('change', performSearch);
+            document.getElementById('manuscriptSearch').addEventListener('input', performSearch);
+        });
+    </script>
+</body>
+</html>
